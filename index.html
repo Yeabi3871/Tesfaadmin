@@ -1,0 +1,2964 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Admin Dashboard - Tesfa Training Center</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Noto+Sans+Ethiopic:wght@400;700&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
+    />
+    <style>
+      :root {
+        --primary-color: #5d4037;
+        --secondary-color: #8d6e63;
+        --background-color: #f5f5f5;
+        --sidebar-bg: #3e2723;
+        --white-color: #ffffff;
+        --text-color: #3e2723;
+        --danger-color: #c62828;
+        --info-color: #1976d2;
+        --success-color: #2e7d32;
+        --warning-color: #f9a825;
+        --font-family: "Noto Sans Ethiopic", sans-serif;
+      }
+
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+
+      body {
+        font-family: var(--font-family);
+        background-color: var(--background-color);
+        color: var(--text-color);
+        margin: 0;
+      }
+
+      .btn {
+        padding: 0.75rem 1.5rem;
+        border-radius: 5px;
+        text-decoration: none;
+        border: none;
+        cursor: pointer;
+        font-weight: 700;
+        transition: background-color 0.3s, transform 0.3s;
+      }
+
+      /* Login Form */
+      #login-section {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 100vh;
+        background-color: #efebe9;
+      }
+
+      #login-container {
+        background: var(--white-color);
+        padding: 2.5rem;
+        border-radius: 8px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        width: 100%;
+        max-width: 400px;
+        text-align: center;
+      }
+
+      #login-container h1 {
+        color: var(--primary-color);
+        margin-bottom: 1.5rem;
+      }
+
+      #login-container .form-group {
+        margin-bottom: 1.5rem;
+        text-align: left;
+      }
+
+      #login-container label {
+        display: block;
+        margin-bottom: 0.5rem;
+        font-weight: 700;
+      }
+
+      #login-container input {
+        width: 100%;
+        padding: 0.75rem;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        font-size: 1rem;
+      }
+
+      .btn-primary {
+        background-color: var(--primary-color);
+        color: var(--white-color);
+        width: 100%;
+      }
+
+      .btn-primary:hover {
+        background-color: var(--secondary-color);
+      }
+
+      #login-error {
+        color: var(--danger-color);
+        margin-top: 1rem;
+        display: none;
+      }
+
+      /* Dashboard Layout */
+      #dashboard-section {
+        display: none;
+        flex-direction: row;
+        min-height: 100vh;
+      }
+
+      .sidebar {
+        width: 260px;
+        background: var(--sidebar-bg);
+        color: var(--white-color);
+        display: flex;
+        flex-direction: column;
+        padding: 1.5rem 0;
+        flex-shrink: 0;
+      }
+
+      .sidebar-header {
+        padding: 0 1.5rem 1.5rem;
+        text-align: center;
+        border-bottom: 1px solid #5d4037;
+      }
+
+      .sidebar-header h2 {
+        margin: 0;
+        font-size: 1.5rem;
+      }
+
+      .sidebar-nav {
+        flex-grow: 1;
+        list-style: none;
+        margin-top: 1rem;
+      }
+
+      .sidebar-nav li a {
+        display: flex;
+        align-items: center;
+        padding: 0.9rem 1.5rem;
+        color: #e0e0e0;
+        text-decoration: none;
+        transition: background 0.3s, color 0.3s;
+        font-size: 1.05rem;
+      }
+
+      .sidebar-nav li a:hover {
+        background: var(--primary-color);
+        color: var(--white-color);
+      }
+
+      .sidebar-nav li a.active {
+        background: var(--secondary-color);
+        color: var(--white-color);
+        font-weight: 700;
+      }
+
+      .sidebar-nav li a i {
+        width: 30px;
+        text-align: center;
+        margin-right: 0.75rem;
+      }
+
+      .sidebar-nav .nav-title {
+        padding: 1.5rem 1.5rem 0.5rem;
+        font-size: 0.85rem;
+        font-weight: 700;
+        color: var(--secondary-color);
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+      }
+
+      .sidebar-footer {
+        padding: 1.5rem;
+        text-align: center;
+        border-top: 1px solid #5d4037;
+      }
+
+      #logout-btn {
+        background: transparent;
+        border: 1px solid var(--danger-color);
+        color: var(--danger-color);
+        width: 100%;
+      }
+      #logout-btn:hover {
+        background: var(--danger-color);
+        color: var(--white-color);
+      }
+
+      .main-content {
+        flex-grow: 1;
+        padding: 2.5rem;
+        overflow-y: auto;
+      }
+
+      .content-page {
+        display: none;
+      }
+
+      .content-page.active {
+        display: block;
+      }
+
+      .content-header {
+        margin-bottom: 2rem;
+      }
+
+      /* Dashboard Overview */
+      .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+        gap: 1.5rem;
+        margin-bottom: 2.5rem;
+      }
+
+      .stat-card {
+        background: var(--white-color);
+        padding: 1.5rem;
+        border-radius: 8px;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.06);
+        display: flex;
+        align-items: center;
+        gap: 1.5rem;
+      }
+
+      .stat-card .icon {
+        font-size: 2.5rem;
+        padding: 1rem;
+        border-radius: 50%;
+        color: var(--white-color);
+      }
+
+      .stat-card.blogs .icon {
+        background-color: var(--info-color);
+      }
+      .stat-card.employees .icon {
+        background-color: var(--success-color);
+      }
+      .stat-card.jobs .icon {
+        background-color: var(--warning-color);
+      }
+      .stat-card.testimonials .icon {
+        background-color: var(--danger-color);
+      }
+      .stat-card.trainees .icon {
+        background-color: #673ab7; /* Purple for Trainees */
+      }
+      .stat-card.advertisements .icon {
+        background-color: #009688; /* Teal for Advertisements */
+      }
+
+      .stat-card .info h4 {
+        font-size: 1.8rem;
+        color: var(--text-color);
+        margin: 0;
+      }
+      .stat-card .info p {
+        color: var(--secondary-color);
+        margin: 0;
+      }
+
+      .charts-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 1.5rem;
+      }
+
+      /* Forms and Lists */
+      .content-section {
+        background: var(--white-color);
+        padding: 2rem;
+        border-radius: 8px;
+        box-shadow: 0 5px 20px rgba(0, 0, 0, 0.07);
+        margin-bottom: 2rem;
+      }
+
+      .content-section h2 {
+        text-align: left;
+        margin-bottom: 1.5rem;
+        color: var(--primary-color);
+      }
+
+      .form-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 1.5rem;
+        margin-bottom: 2rem;
+      }
+
+      .form-group {
+        display: flex;
+        flex-direction: column;
+      }
+
+      .form-group label {
+        margin-bottom: 0.5rem;
+        font-weight: 700;
+      }
+
+      .form-group input,
+      .form-group select,
+      .form-group textarea {
+        width: 100%;
+        padding: 0.75rem;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        font-size: 1rem;
+        font-family: var(--font-family);
+      }
+
+      .form-group textarea {
+        min-height: 120px;
+        resize: vertical;
+      }
+
+      .image-preview {
+        width: 100px;
+        height: 100px;
+        border-radius: 8px;
+        object-fit: cover;
+        border: 2px solid #ddd;
+        margin-top: 1rem;
+        display: none;
+      }
+
+      .full-width {
+        grid-column: 1 / -1;
+      }
+
+      .list-controls {
+        margin-bottom: 1.5rem;
+      }
+
+      .search-bar {
+        width: 100%;
+        max-width: 400px;
+        padding: 0.75rem;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        font-size: 1rem;
+      }
+
+      .data-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 1rem;
+      }
+
+      .data-table th,
+      .data-table td {
+        padding: 0.8rem 1rem;
+        text-align: left;
+        border-bottom: 1px solid var(--background-color);
+      }
+
+      .data-table th {
+        font-weight: 700;
+        color: var(--secondary-color);
+      }
+
+      .loading-indicator td {
+        text-align: center;
+        color: var(--secondary-color);
+        padding: 2rem;
+      }
+
+      .pagination-controls {
+        display: flex;
+        justify-content: flex-end;
+        align-items: center;
+        gap: 1rem;
+        margin-top: 1.5rem;
+      }
+
+      .pagination-controls button {
+        background-color: var(--primary-color);
+        color: var(--white-color);
+        padding: 0.5rem 1rem;
+      }
+
+      .pagination-controls button:disabled {
+        background-color: #ccc;
+        cursor: not-allowed;
+      }
+
+      .btn-delete {
+        background: var(--danger-color);
+        color: var(--white-color);
+        padding: 0.5rem 1rem;
+        font-size: 0.9rem;
+      }
+      .btn-delete:hover {
+        background: #a02020;
+      }
+
+      .btn-view,
+      .btn-edit,
+      .btn-complete {
+        background: var(--info-color);
+        color: var(--white-color);
+        padding: 0.5rem 1rem;
+        font-size: 0.9rem;
+        margin-right: 0.5rem;
+        border: none;
+      }
+      .btn-edit {
+        background: var(--warning-color);
+      }
+      .btn-complete {
+        background: var(--success-color);
+      }
+      .btn-view:hover {
+        background: #1565c0;
+      }
+      .btn-edit:hover {
+        background: #f59100;
+      }
+      .btn-complete:hover {
+        background: #206024;
+      }
+
+      .table-image {
+        width: 60px;
+        height: 60px;
+        border-radius: 50%;
+        object-fit: cover;
+      }
+
+      .status-ongoing,
+      .status-finished {
+        padding: 0.3rem 0.8rem;
+        border-radius: 12px;
+        font-weight: 700;
+        font-size: 0.8rem;
+        color: var(--white-color);
+      }
+
+      .status-ongoing {
+        background-color: var(--warning-color);
+      }
+
+      .status-finished {
+        background-color: var(--success-color);
+      }
+
+      /* Styles for the new sections */
+      .info-section {
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        padding: 1.5rem;
+        margin-bottom: 1.5rem;
+      }
+
+      .info-section h3 {
+        color: var(--primary-color);
+        margin-bottom: 1rem;
+      }
+
+      .dynamic-item {
+        margin-bottom: 1.5rem;
+        padding-bottom: 1.5rem;
+        border-bottom: 1px dashed #e0e0e0;
+        position: relative;
+      }
+      .dynamic-item:last-child {
+        border-bottom: none;
+      }
+
+      .btn-delete-item {
+        background-color: var(--danger-color);
+        color: var(--white-color);
+        padding: 0.5rem 1rem;
+        font-size: 0.9rem;
+        position: absolute;
+        top: 1rem;
+        right: 1rem;
+      }
+      .btn-delete-item:hover {
+        background-color: #a02020;
+      }
+
+      .text-right {
+        text-align: right;
+      }
+      /* Message Box */
+      .message-box {
+        position: fixed;
+        bottom: 20px;
+        left: 50%;
+        transform: translateX(-50%);
+        padding: 15px 30px;
+        background-color: #333;
+        color: white;
+        border-radius: 8px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        z-index: 1000;
+        opacity: 0;
+        visibility: hidden;
+        transition: opacity 0.3s ease, visibility 0.3s ease;
+      }
+      .message-box.show {
+        opacity: 1;
+        visibility: visible;
+      }
+
+      /* Confirmation Modal and View Modal */
+      .modal {
+        display: none;
+        position: fixed;
+        z-index: 1;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        overflow: auto;
+        background-color: rgba(0, 0, 0, 0.4);
+      }
+
+      .modal-content {
+        background-color: #fefefe;
+        margin: 10% auto;
+        padding: 20px;
+        border: 1px solid #888;
+        width: 80%;
+        max-width: 400px;
+        border-radius: 8px;
+        text-align: center;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+      }
+
+      #details-modal .modal-content {
+        max-width: 700px;
+        text-align: left;
+      }
+      #trainee-details-modal .modal-content {
+        max-width: 500px;
+        text-align: left;
+      }
+
+      .modal-buttons {
+        margin-top: 20px;
+        display: flex;
+        justify-content: space-around;
+      }
+      .hidden {
+        display: none;
+      }
+      .modal-close {
+        color: #aaa;
+        float: right;
+        font-size: 28px;
+        font-weight: bold;
+        line-height: 1;
+      }
+
+      .modal-close:hover,
+      .modal-close:focus {
+        color: black;
+        text-decoration: none;
+        cursor: pointer;
+      }
+      .profile-details h3 {
+        color: var(--primary-color);
+        margin-bottom: 1rem;
+        border-bottom: 1px solid #eee;
+        padding-bottom: 0.5rem;
+      }
+      .profile-details h4 {
+        color: var(--primary-color);
+        margin-top: 1.5rem;
+        margin-bottom: 0.5rem;
+      }
+      .profile-details ul {
+        list-style: none;
+        padding-left: 0;
+      }
+      .profile-details li {
+        margin-bottom: 0.5rem;
+      }
+      .skills-list {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+        padding-top: 0.5rem;
+      }
+      .skill-tag {
+        background-color: #e0e0e0;
+        color: var(--primary-color);
+        padding: 0.3rem 0.8rem;
+        border-radius: 12px;
+        font-size: 0.9rem;
+        font-weight: 500;
+      }
+    </style>
+  </head>
+  <body>
+    <section id="login-section">
+      <div id="login-container">
+        <h1>Admin Login</h1>
+        <form id="login-form">
+          <div class="form-group">
+            <label for="email">Email</label>
+            <input
+              type="email"
+              id="email"
+              required
+              value="employeeprofile@admin.com"
+            />
+          </div>
+          <div class="form-group">
+            <label for="password">Password</label>
+            <input
+              type="password"
+              id="password"
+              required
+              value="employeeprofile123"
+            />
+          </div>
+          <button type="submit" class="btn btn-primary">Login</button>
+          <p id="login-error">Invalid email or password.</p>
+        </form>
+      </div>
+    </section>
+
+    <section id="dashboard-section">
+      <aside class="sidebar">
+        <div class="sidebar-header">
+          <h2>Admin Dashboard</h2>
+        </div>
+        <ul class="sidebar-nav">
+          <li class="nav-title">Main</li>
+          <li>
+            <a href="#" class="nav-link active" data-target="dashboard-overview"
+              ><i class="fas fa-tachometer-alt"></i> Dashboard</a
+            >
+          </li>
+
+          <li class="nav-title">Training Management</li>
+          <li>
+            <a href="#" class="nav-link" data-target="add-trainee"
+              ><i class="fas fa-user-graduate"></i> Add Trainee</a
+            >
+          </li>
+          <li>
+            <a href="#" class="nav-link" data-target="list-trainee"
+              ><i class="fas fa-list"></i> List Trainees</a
+            >
+          </li>
+
+          <li class="nav-title">Recruitment</li>
+          <li>
+            <a href="#" class="nav-link" data-target="add-employee"
+              ><i class="fas fa-user-plus"></i> Add Employee</a
+            >
+          </li>
+          <li>
+            <a href="#" class="nav-link" data-target="list-employee"
+              ><i class="fas fa-users"></i> List Employees</a
+            >
+          </li>
+          <li>
+            <a href="#" class="nav-link" data-target="add-job"
+              ><i class="fas fa-briefcase"></i> Add Job</a
+            >
+          </li>
+          <li>
+            <a href="#" class="nav-link" data-target="list-job"
+              ><i class="fas fa-list-alt"></i> List Jobs</a
+            >
+          </li>
+
+          <li class="nav-title">Content Management</li>
+          <li>
+            <a href="#" class="nav-link" data-target="add-testimonial"
+              ><i class="fas fa-comment-dots"></i> Add Testimonial</a
+            >
+          </li>
+          <li>
+            <a href="#" class="nav-link" data-target="list-testimonial"
+              ><i class="fas fa-comments"></i> List Testimonials</a
+            >
+          </li>
+          <li>
+            <a href="#" class="nav-link" data-target="add-blog"
+              ><i class="fas fa-pen-fancy"></i> Add Blog</a
+            >
+          </li>
+          <li>
+            <a href="#" class="nav-link" data-target="list-blog"
+              ><i class="fab fa-blogger-b"></i> List Blogs</a
+            >
+          </li>
+
+          <li>
+            <a href="#" class="nav-link" data-target="add-advertisement">
+              <i class="fas fa-ad"></i> Add Advertisement
+            </a>
+          </li>
+          <li>
+            <a href="#" class="nav-link" data-target="list-advertisement">
+              <i class="fas fa-clipboard-list"></i> List Advertisements
+            </a>
+          </li>
+
+          <li class="nav-title">Feedback</li>
+          <li>
+            <a href="#" class="nav-link" data-target="user-feedback"
+              ><i class="fas fa-envelope-open-text"></i> User Feedback</a
+            >
+          </li>
+        </ul>
+        <div class="sidebar-footer">
+          <button id="logout-btn" class="btn">Logout</button>
+        </div>
+      </aside>
+
+      <main class="main-content">
+        <!-- Dashboard Overview Page -->
+        <div id="dashboard-overview-page" class="content-page active">
+          <h1 class="content-header">Dashboard Overview</h1>
+
+          <div class="content-section">
+            <h2>Training Management</h2>
+            <div class="stats-grid">
+              <div class="stat-card trainees">
+                <div class="icon"><i class="fas fa-user-graduate"></i></div>
+                <div class="info">
+                  <h4 id="trainee-count">0</h4>
+                  <p>Total Trainees</p>
+                </div>
+              </div>
+              <div class="stat-card trainees">
+                <div class="icon"><i class="fas fa-spinner"></i></div>
+                <div class="info">
+                  <h4 id="ongoing-trainee-count">0</h4>
+                  <p>Ongoing Trainees</p>
+                </div>
+              </div>
+              <div class="stat-card trainees">
+                <div class="icon"><i class="fas fa-check-circle"></i></div>
+                <div class="info">
+                  <h4 id="finished-trainee-count">0</h4>
+                  <p>Finished Trainees</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="content-section">
+            <h2>Content & Recruitment</h2>
+            <div class="stats-grid">
+              <div class="stat-card employees">
+                <div class="icon"><i class="fas fa-users"></i></div>
+                <div class="info">
+                  <h4 id="employee-count">0</h4>
+                  <p>Employees</p>
+                </div>
+              </div>
+              <div class="stat-card jobs">
+                <div class="icon"><i class="fas fa-briefcase"></i></div>
+                <div class="info">
+                  <h4 id="job-count">0</h4>
+                  <p>Jobs</p>
+                </div>
+              </div>
+              <div class="stat-card testimonials">
+                <div class="icon"><i class="fas fa-comments"></i></div>
+                <div class="info">
+                  <h4 id="testimonial-count">0</h4>
+                  <p>Testimonials</p>
+                </div>
+              </div>
+              <div class="stat-card blogs">
+                <div class="icon"><i class="fab fa-blogger-b"></i></div>
+                <div class="info">
+                  <h4 id="blog-count">0</h4>
+                  <p>Blogs</p>
+                </div>
+              </div>
+              <div class="stat-card advertisements">
+                <div class="icon"><i class="fas fa-bullhorn"></i></div>
+                <div class="info">
+                  <h4 id="advertisement-count">0</h4>
+                  <p>Advertisements</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Add/Edit Employee Page -->
+        <div id="add-employee-page" class="content-page">
+          <h1 id="seeker-form-title" class="content-header">
+            Add New Employee
+          </h1>
+          <section class="content-section">
+            <form id="seeker-form" class="form-grid">
+              <!-- Personal Information Section -->
+              <div class="full-width info-section">
+                <h3>Personal Information</h3>
+                <div class="form-grid">
+                  <div class="form-group">
+                    <label for="seeker-id">Employee ID</label>
+                    <input type="text" id="seeker-id" required />
+                  </div>
+                  <div class="form-group">
+                    <label for="seeker-name">Full Name</label>
+                    <input type="text" id="seeker-name" required />
+                  </div>
+                  <div class="form-group">
+                    <label for="seeker-email">Email</label>
+                    <input type="email" id="seeker-email" required />
+                  </div>
+                  <div class="form-group">
+                    <label for="seeker-phone">Phone Number</label>
+                    <input type="tel" id="seeker-phone" required />
+                  </div>
+                  <div class="form-group">
+                    <label for="seeker-experience">Experience (Years)</label>
+                    <input type="number" id="seeker-experience" required />
+                  </div>
+                  <div class="form-group">
+                    <label for="seeker-education">Education Level</label>
+                    <select id="seeker-education" required>
+                      <option value="diploma">Diploma</option>
+                      <option value="degree">Degree</option>
+                      <option value="masters">Masters</option>
+                      <option value="phd">PhD</option>
+                    </select>
+                  </div>
+                  <div class="form-group full-width">
+                    <label for="seeker-image">Upload Image</label>
+                    <input type="file" id="seeker-image" accept="image/*" />
+                    <img
+                      id="seeker-image-preview"
+                      class="image-preview"
+                      alt="Image preview"
+                    />
+                  </div>
+                </div>
+              </div>
+
+              <!-- Work Experience Section -->
+              <div class="full-width info-section">
+                <h3>Work Experience</h3>
+                <div id="experience-container">
+                  <!-- First work experience item, can be duplicated -->
+                </div>
+                <div class="text-right">
+                  <button
+                    type="button"
+                    id="add-experience-btn"
+                    class="btn btn-primary"
+                  >
+                    <i class="fas fa-plus-circle"></i> Add More Experience
+                  </button>
+                </div>
+              </div>
+
+              <!-- Education Section -->
+              <div class="full-width info-section">
+                <h3>Education</h3>
+                <div id="education-container"></div>
+                <div class="text-right">
+                  <button
+                    type="button"
+                    id="add-education-btn"
+                    class="btn btn-primary"
+                  >
+                    <i class="fas fa-plus-circle"></i> Add More Education
+                  </button>
+                </div>
+              </div>
+
+              <!-- Skills Section -->
+              <div class="full-width info-section">
+                <h3>Skills</h3>
+                <div id="skills-container"></div>
+                <div class="text-right">
+                  <button
+                    type="button"
+                    id="add-skill-btn"
+                    class="btn btn-primary"
+                  >
+                    <i class="fas fa-plus-circle"></i> Add More Skills
+                  </button>
+                </div>
+              </div>
+
+              <!-- Languages & Proficiency Section -->
+              <div class="full-width info-section">
+                <h3>Languages & Proficiency</h3>
+                <div class="form-grid">
+                  <div class="form-group">
+                    <label for="seeker-language">Select Language</label>
+                    <select id="seeker-language" required>
+                      <option value="">-- Select Language --</option>
+                      <option value="English">English</option>
+                      <option value="Amharic">Amharic</option>
+                      <option value="Afaan Oromoo">Afaan Oromoo</option>
+                      <option value="Tigrigna">Tigrigna</option>
+                      <option value="Arabic">Arabic</option>
+                      <option value="French">French</option>
+                      <option value="Chinese">Chinese</option>
+                      <option value="Other">Other</option>
+                    </select>
+                  </div>
+                  <div class="form-group">
+                    <label for="seeker-proficiency">Proficiency</label>
+                    <select id="seeker-proficiency" required>
+                      <option value="">-- Select Proficiency --</option>
+                      <option value="Native">Native</option>
+                      <option value="Fluent">Fluent</option>
+                      <option value="Intermediate">Intermediate</option>
+                      <option value="Basic">Basic</option>
+                    </select>
+                  </div>
+                  <div class="form-group" id="other-language-group">
+                    <label for="other-language-input">Other Language</label>
+                    <input
+                      type="text"
+                      id="other-language-input"
+                      class="hidden"
+                    />
+                  </div>
+                </div>
+              </div>
+
+              <!-- Current Location Section -->
+              <div class="full-width info-section">
+                <h3>Current Location</h3>
+                <div class="form-grid">
+                  <div class="form-group">
+                    <label for="seeker-city">City</label>
+                    <input type="text" id="seeker-city" required />
+                  </div>
+                  <div class="form-group">
+                    <label for="seeker-region">Region</label>
+                    <select id="seeker-region" required>
+                      <option value="">-- Select Region --</option>
+                      <option value="Addis Ababa">Addis Ababa</option>
+                      <option value="Oromia">Oromia</option>
+                      <option value="Amhara">Amhara</option>
+                      <option value="Tigray">Tigray</option>
+                      <option value="Somali">Somali</option>
+                      <option value="Afar">Afar</option>
+                      <option value="Benishangul-Gumuz">
+                        Benishangul-Gumuz
+                      </option>
+                      <option value="SNNPR">SNNPR</option>
+                      <option value="Gambela">Gambela</option>
+                      <option value="Harari">Harari</option>
+                      <option value="Sidama">Sidama</option>
+                      <option value="South West Ethiopia">
+                        South West Ethiopia
+                      </option>
+                    </select>
+                  </div>
+                  <div class="form-group full-width">
+                    <label for="seeker-country">Country</label>
+                    <input type="text" id="seeker-country" required />
+                  </div>
+                </div>
+              </div>
+
+              <div class="form-group full-width">
+                <button
+                  type="submit"
+                  id="seeker-submit-btn"
+                  class="btn btn-primary"
+                >
+                  Add Employee
+                </button>
+              </div>
+            </form>
+          </section>
+        </div>
+
+        <!-- List Employee Page -->
+        <div id="list-employee-page" class="content-page">
+          <h1 class="content-header">Employee List</h1>
+          <section class="content-section">
+            <div class="list-controls">
+              <input
+                type="text"
+                id="seekers-search"
+                class="search-bar"
+                placeholder="Search by name or ID..."
+              />
+            </div>
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>Image</th>
+                  <th>Employee ID</th>
+                  <th>Name</th>
+                  <th>Education</th>
+                  <th>Experience</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody id="seekers-list">
+                <!-- Data will be populated here -->
+              </tbody>
+            </table>
+            <div class="pagination-controls" id="seekers-pagination"></div>
+          </section>
+        </div>
+
+        <!-- Add Trainee Page -->
+        <div id="add-trainee-page" class="content-page">
+          <h1 id="trainee-form-title" class="content-header">
+            Add New Trainee
+          </h1>
+          <section class="content-section">
+            <form id="trainee-form" class="form-grid">
+              <div class="form-group">
+                <label for="trainee-name">Full Name</label>
+                <input type="text" id="trainee-name" required />
+              </div>
+              <div class="form-group">
+                <label for="trainee-email">Email</label>
+                <input type="email" id="trainee-email" required />
+              </div>
+              <div class="form-group">
+                <label for="trainee-phone">Phone Number</label>
+                <input type="tel" id="trainee-phone" required />
+              </div>
+              <div class="form-group">
+                <label for="trainee-program">Training Program</label>
+                <input
+                  type="text"
+                  id="trainee-program"
+                  placeholder="e.g., Web Development"
+                  required
+                />
+              </div>
+              <div class="form-group">
+                <label for="trainee-start-date">Start Date</label>
+                <input type="date" id="trainee-start-date" required />
+              </div>
+              <div class="form-group">
+                <label for="trainee-image">Upload Image</label>
+                <input type="file" id="trainee-image" accept="image/*" />
+                <img
+                  id="trainee-image-preview"
+                  class="image-preview"
+                  alt="Image preview"
+                />
+              </div>
+              <div class="form-group full-width">
+                <button
+                  type="submit"
+                  id="trainee-submit-btn"
+                  class="btn btn-primary"
+                >
+                  Add Trainee
+                </button>
+              </div>
+            </form>
+          </section>
+        </div>
+
+        <!-- List Trainee Page -->
+        <div id="list-trainee-page" class="content-page">
+          <h1 class="content-header">Trainee List</h1>
+          <section class="content-section">
+            <div class="list-controls">
+              <input
+                type="text"
+                id="trainees-search"
+                class="search-bar"
+                placeholder="Search by name or program..."
+              />
+            </div>
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>Image</th>
+                  <th>Name</th>
+                  <th>Program</th>
+                  <th>Start Date</th>
+                  <th>Status</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody id="trainees-list">
+                <!-- Data will be populated here -->
+              </tbody>
+            </table>
+            <div class="pagination-controls" id="trainees-pagination"></div>
+          </section>
+        </div>
+
+        <!-- Add Job Page -->
+        <div id="add-job-page" class="content-page">
+          <h1 id="job-form-title" class="content-header">
+            Add New Job Vacancy
+          </h1>
+          <section class="content-section">
+            <form id="job-form" class="form-grid">
+              <div class="form-group full-width">
+                <label for="job-organization">Organization Name</label>
+                <input type="text" id="job-organization" required />
+              </div>
+
+              <div class="form-group">
+                <label for="organization-type">Organization Type</label>
+                <select id="organization-type" required>
+                  <option value="Government">Government</option>
+                  <option value="Private">Private</option>
+                  <option value="NGO">NGO</option>
+                  <option value="Other">Other</option>
+                </select>
+              </div>
+
+              <div class="form-group full-width">
+                <label for="job-title">Job Title(s)</label>
+                <input
+                  type="text"
+                  id="job-title"
+                  placeholder="e.g., Senior Accountant, Project Coordinator"
+                  required
+                />
+              </div>
+
+              <div class="form-group">
+                <label for="job-type">Job Type</label>
+                <select id="job-type" required>
+                  <option value="Full-time">Full-time</option>
+                  <option value="Part-time">Part-time</option>
+                  <option value="Contract">Contract</option>
+                  <option value="Internship">Internship</option>
+                </select>
+              </div>
+
+              <div class="form-group full-width">
+                <label for="job-description"
+                  >Job Description (50–500 chars)</label
+                >
+                <textarea
+                  id="job-description"
+                  minlength="50"
+                  maxlength="500"
+                  required
+                ></textarea>
+              </div>
+
+              <div class="form-group">
+                <label for="job-education">Required Educational Level</label>
+                <select id="job-education" required>
+                  <option value="Diploma">Diploma</option>
+                  <option value="Degree">Degree</option>
+                  <option value="Masters">Masters</option>
+                  <option value="PhD">PhD</option>
+                </select>
+              </div>
+
+              <div class="form-group">
+                <label for="job-experience"
+                  >Required Work Experience (years)</label
+                >
+                <input type="number" id="job-experience" min="0" required />
+              </div>
+
+              <div class="form-group full-width">
+                <label for="job-skills"
+                  >Required Skills (comma separated)</label
+                >
+                <input
+                  type="text"
+                  id="job-skills"
+                  placeholder="e.g., MS Office, Project Management, Teamwork"
+                  required
+                />
+              </div>
+
+              <div class="form-group full-width">
+                <label for="job-location"
+                  >Job Location(s) (comma separated)</label
+                >
+                <input
+                  type="text"
+                  id="job-location"
+                  placeholder="e.g., Addis Ababa, Oromia Region, specific place"
+                  required
+                />
+              </div>
+
+              <div class="form-group">
+                <label for="job-deadline">Application Deadline</label>
+                <input type="date" id="job-deadline" required />
+              </div>
+
+              <div class="form-group">
+                <label for="job-email">Contact Email Address</label>
+                <input type="email" id="job-email" required />
+              </div>
+
+              <div class="form-group">
+                <label for="job-phone">Phone Number </label>
+                <input type="tel" id="job-phone" />
+              </div>
+
+              <div class="form-group full-width">
+                <button
+                  type="submit"
+                  id="job-submit-btn"
+                  class="btn btn-primary"
+                >
+                  Add Job Vacancy
+                </button>
+              </div>
+            </form>
+          </section>
+        </div>
+
+        <!-- List Job Page -->
+        <div id="list-job-page" class="content-page">
+          <h1 class="content-header">Job Vacancy List</h1>
+          <section class="content-section">
+            <div class="list-controls">
+              <input
+                type="text"
+                id="jobs-search"
+                class="search-bar"
+                placeholder="Search by title or organization..."
+              />
+            </div>
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>Organization</th>
+                  <th>Organization Type</th>
+                  <th>Job Titles</th>
+                  <th>Job Type</th>
+                  <th>Deadline</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody id="jobs-list"></tbody>
+            </table>
+            <div class="pagination-controls" id="jobs-pagination"></div>
+          </section>
+        </div>
+
+        <!-- Add Testimonial Page -->
+        <div id="add-testimonial-page" class="content-page">
+          <h1 id="testimonial-form-title" class="content-header">
+            Add New Testimonial
+          </h1>
+          <section class="content-section">
+            <form id="testimonial-form" class="form-grid">
+              <div class="form-group">
+                <label for="testimonial-name">Person's Name</label>
+                <input type="text" id="testimonial-name" required />
+              </div>
+              <div class="form-group">
+                <label for="testimonial-title">Person's Title</label>
+                <input
+                  type="text"
+                  id="testimonial-title"
+                  placeholder="e.g., Retired Engineer"
+                  required
+                />
+              </div>
+              <div class="form-group full-width">
+                <label for="testimonial-quote">Quote</label>
+                <textarea id="testimonial-quote" required></textarea>
+              </div>
+              <div class="form-group full-width">
+                <button
+                  type="submit"
+                  id="testimonial-submit-btn"
+                  class="btn btn-primary"
+                >
+                  Add Testimonial
+                </button>
+              </div>
+            </form>
+          </section>
+        </div>
+
+        <!-- List Testimonial Page -->
+        <div id="list-testimonial-page" class="content-page">
+          <h1 class="content-header">Testimonial List</h1>
+          <section class="content-section">
+            <div class="list-controls">
+              <input
+                type="text"
+                id="testimonials-search"
+                class="search-bar"
+                placeholder="Search by name..."
+              />
+            </div>
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>Name</th>
+                  <th>Title</th>
+                  <th>Quote</th>
+                  <th>Action</th>
+                </tr>
+              </thead>
+              <tbody id="testimonials-list"></tbody>
+            </table>
+            <div class="pagination-controls" id="testimonials-pagination"></div>
+          </section>
+        </div>
+
+        <!-- Add Blog Page -->
+        <div id="add-blog-page" class="content-page">
+          <h1 id="blog-form-title" class="content-header">Add New Blog Post</h1>
+          <section class="content-section">
+            <form id="blog-form" class="form-grid">
+              <div class="form-group">
+                <label for="blog-title">Title</label>
+                <input type="text" id="blog-title" required />
+              </div>
+              <div class="form-group">
+                <label for="blog-date">Date</label>
+                <input type="date" id="blog-date" required />
+              </div>
+              <div class="form-group full-width">
+                <label for="blog-image">Upload Image</label>
+                <input type="file" id="blog-image" accept="image/*" />
+                <img
+                  id="blog-image-preview"
+                  class="image-preview"
+                  alt="Image preview"
+                />
+              </div>
+              <div class="form-group full-width">
+                <label for="blog-content">Content</label>
+                <textarea id="blog-content" required></textarea>
+              </div>
+              <div class="form-group full-width">
+                <button
+                  type="submit"
+                  id="blog-submit-btn"
+                  class="btn btn-primary"
+                >
+                  Add Blog Post
+                </button>
+              </div>
+            </form>
+          </section>
+        </div>
+
+        <!-- List Blog Page -->
+        <div id="list-blog-page" class="content-page">
+          <h1 class="content-header">Blog Post List</h1>
+          <section class="content-section">
+            <div class="list-controls">
+              <input
+                type="text"
+                id="blogs-search"
+                class="search-bar"
+                placeholder="Search by title..."
+              />
+            </div>
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>Image</th>
+                  <th>Title</th>
+                  <th>Date</th>
+                  <th>Action</th>
+                </tr>
+              </thead>
+              <tbody id="blogs-list"></tbody>
+            </table>
+            <div class="pagination-controls" id="blogs-pagination"></div>
+          </section>
+        </div>
+
+        <!-- Add Advertisement Page -->
+        <div id="add-advertisement-page" class="content-page">
+          <h1 class="content-header">Add New Advertisement</h1>
+          <section class="content-section">
+            <form id="advertisement-form" class="form-grid">
+              <div class="form-group full-width">
+                <label for="advert-title">Title</label>
+                <input type="text" id="advert-title" required />
+              </div>
+              <div class="form-group full-width">
+                <label for="advert-image">Upload Image</label>
+                <input type="file" id="advert-image" accept="image/*" />
+                <img
+                  id="advert-image-preview"
+                  class="image-preview"
+                  alt="Image preview"
+                />
+              </div>
+              <div class="form-group full-width">
+                <label for="advert-content">Content</label>
+                <textarea id="advert-content" required></textarea>
+              </div>
+              <div class="form-group full-width">
+                <button
+                  type="submit"
+                  id="advert-submit-btn"
+                  class="btn btn-primary"
+                >
+                  Add Advertisement
+                </button>
+              </div>
+            </form>
+          </section>
+        </div>
+
+        <!-- List Advertisement Page -->
+        <div id="list-advertisement-page" class="content-page">
+          <h1 class="content-header">Advertisement List</h1>
+          <section class="content-section">
+            <div class="list-controls">
+              <input
+                type="text"
+                id="advertisements-search"
+                class="search-bar"
+                placeholder="Search by title..."
+              />
+            </div>
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>Image</th>
+                  <th>Title</th>
+                  <th>Content</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody id="advertisements-list"></tbody>
+            </table>
+            <div
+              class="pagination-controls"
+              id="advertisements-pagination"
+            ></div>
+          </section>
+        </div>
+
+        <!-- User Feedback Page -->
+        <div id="user-feedback-page" class="content-page">
+          <h1 class="content-header">User Feedback</h1>
+          <section class="content-section">
+            <p>
+              This section is under construction. Feedback from the contact form
+              will appear here.
+            </p>
+          </section>
+        </div>
+      </main>
+    </section>
+
+    <!-- Modal for Confirmations -->
+    <div id="confirmation-modal" class="modal">
+      <div class="modal-content">
+        <p id="modal-text"></p>
+        <div class="modal-buttons">
+          <button id="modal-cancel-btn" class="btn">Cancel</button>
+          <button id="modal-confirm-btn" class="btn btn-danger">Confirm</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Modal for viewing Employee Details -->
+    <div id="details-modal" class="modal">
+      <div class="modal-content">
+        <span class="modal-close">&times;</span>
+        <div id="employee-details-content" class="profile-details"></div>
+      </div>
+    </div>
+
+    <!-- Modal for viewing Trainee Details -->
+    <div id="trainee-details-modal" class="modal">
+      <div class="modal-content">
+        <span class="modal-close">&times;</span>
+        <div id="trainee-details-content" class="profile-details"></div>
+      </div>
+    </div>
+
+    <!-- Modal for viewing Job Details -->
+    <div id="job-details-modal" class="modal">
+      <div class="modal-content">
+        <span class="modal-close">&times;</span>
+        <div id="job-details-content" class="profile-details"></div>
+      </div>
+    </div>
+
+    <!-- Message Box -->
+    <div id="message-box" class="message-box"></div>
+
+    <!-- Firebase SDK -->
+    <script type="module">
+      import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+      import {
+        getFirestore,
+        collection,
+        addDoc,
+        onSnapshot,
+        doc,
+        deleteDoc,
+        Timestamp,
+        getCountFromServer,
+        getDoc,
+        updateDoc,
+        query,
+        where,
+        getDocs,
+      } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+      const firebaseConfig = {
+        apiKey: "AIzaSyD1EmqfRPUz14JgO0EjxzsNph_AAzEm0WU",
+        authDomain: "tesfa-website.firebaseapp.com",
+        projectId: "tesfa-website",
+        storageBucket: "tesfa-website.appspot.com",
+        messagingSenderId: "315075830974",
+        appId: "1:315075830974:web:e3f8e52bb77b89b46daaef",
+        measurementId: "G-PXNMYMBMHE",
+      };
+
+      const app = initializeApp(firebaseConfig);
+      const db = getFirestore(app);
+
+      // --- Global State ---
+      let currentEdit = {
+        collection: null,
+        docId: null,
+      };
+
+      const appData = {
+        seekers: [],
+        trainees: [],
+        jobs: [],
+        testimonials: [],
+        blogs: [],
+        advertisements: [],
+      };
+
+      const paginationState = {
+        seekers: { currentPage: 1, itemsPerPage: 5, searchTerm: "" },
+        trainees: { currentPage: 1, itemsPerPage: 5, searchTerm: "" },
+        jobs: { currentPage: 1, itemsPerPage: 5, searchTerm: "" },
+        testimonials: { currentPage: 1, itemsPerPage: 5, searchTerm: "" },
+        blogs: { currentPage: 1, itemsPerPage: 5, searchTerm: "" },
+        advertisements: { currentPage: 1, itemsPerPage: 5, searchTerm: "" },
+      };
+
+      // --- UI Helper Functions ---
+      function showMessageBox(message, isError = false) {
+        const msgBox = document.getElementById("message-box");
+        msgBox.textContent = message;
+        msgBox.style.backgroundColor = isError ? "var(--danger-color)" : "#333";
+        msgBox.classList.add("show");
+        setTimeout(() => {
+          msgBox.classList.remove("show");
+        }, 3000);
+      }
+
+      function showConfirmationModal(message, onConfirm) {
+        const modal = document.getElementById("confirmation-modal");
+        const modalText = document.getElementById("modal-text");
+        const confirmBtn = document.getElementById("modal-confirm-btn");
+        const cancelBtn = document.getElementById("modal-cancel-btn");
+
+        modalText.textContent = message;
+        modal.style.display = "block";
+
+        const handleConfirm = () => {
+          onConfirm();
+          modal.style.display = "none";
+          confirmBtn.removeEventListener("click", handleConfirm);
+          cancelBtn.removeEventListener("click", handleCancel);
+        };
+
+        const handleCancel = () => {
+          modal.style.display = "none";
+          confirmBtn.removeEventListener("click", handleConfirm);
+          cancelBtn.removeEventListener("click", handleCancel);
+        };
+
+        confirmBtn.addEventListener("click", handleConfirm);
+        cancelBtn.addEventListener("click", handleCancel);
+      }
+
+      function showDetailsModal(modalId, content) {
+        const modal = document.getElementById(modalId);
+        const modalContent = modal.querySelector(".profile-details");
+        modalContent.innerHTML = content;
+        modal.style.display = "block";
+      }
+
+      function closeModals() {
+        document
+          .querySelectorAll(".modal")
+          .forEach((modal) => (modal.style.display = "none"));
+      }
+
+      // --- Authentication ---
+      const loginSection = document.getElementById("login-section");
+      const dashboardSection = document.getElementById("dashboard-section");
+      const loginForm = document.getElementById("login-form");
+      const loginError = document.getElementById("login-error");
+      const logoutBtn = document.getElementById("logout-btn");
+
+      const ADMIN_EMAIL = "employeeprofile@admin.com";
+      const ADMIN_PASSWORD = "employeeprofile123";
+
+      loginForm.addEventListener("submit", (e) => {
+        e.preventDefault();
+        const email = document.getElementById("email").value;
+        const password = document.getElementById("password").value;
+
+        if (email === ADMIN_EMAIL && password === ADMIN_PASSWORD) {
+          sessionStorage.setItem("isAdminAuthenticated", "true");
+          showDashboard();
+        } else {
+          loginError.style.display = "block";
+        }
+      });
+
+      logoutBtn.addEventListener("click", () => {
+        sessionStorage.removeItem("isAdminAuthenticated");
+        showLogin();
+      });
+
+      function showDashboard() {
+        loginSection.style.display = "none";
+        dashboardSection.style.display = "flex";
+        updateDashboardCounts();
+      }
+
+      function showLogin() {
+        loginSection.style.display = "flex";
+        dashboardSection.style.display = "none";
+      }
+
+      if (sessionStorage.getItem("isAdminAuthenticated") === "true") {
+        showDashboard();
+      }
+
+      // --- Dashboard Navigation ---
+      const navLinks = document.querySelectorAll(".sidebar .nav-link");
+      const contentPages = document.querySelectorAll(".content-page");
+
+      function navigateTo(target, resetForm = true) {
+        navLinks.forEach((l) => l.classList.remove("active"));
+        const targetLink = document.querySelector(`[data-target="${target}"]`);
+        if (targetLink) targetLink.classList.add("active");
+
+        contentPages.forEach((page) => page.classList.remove("active"));
+        const targetPage = document.getElementById(`${target}-page`);
+        if (targetPage) {
+          targetPage.classList.add("active");
+        }
+
+        if (resetForm) {
+          currentEdit.collection = null;
+          currentEdit.docId = null;
+          resetAllForms();
+
+          if (target === "add-employee") {
+            document.getElementById("experience-container").innerHTML =
+              experienceTemplate;
+            document.getElementById("education-container").innerHTML =
+              educationTemplate;
+            document.getElementById("skills-container").innerHTML =
+              skillsTemplate;
+            populateYearDropdowns();
+          }
+        }
+      }
+
+      function resetAllForms() {
+        resetSeekerForm();
+        resetTraineeForm();
+        resetJobForm();
+        resetTestimonialForm();
+        resetBlogForm();
+        resetAdvertForm();
+      }
+
+      navLinks.forEach((link) => {
+        link.addEventListener("click", (e) => {
+          e.preventDefault();
+          navigateTo(link.dataset.target);
+        });
+      });
+
+      document.querySelectorAll(".modal-close").forEach((btn) => {
+        btn.addEventListener("click", closeModals);
+      });
+      window.addEventListener("click", (event) => {
+        if (event.target.classList.contains("modal")) {
+          closeModals();
+        }
+      });
+
+      // --- Dashboard Counts ---
+      async function updateDashboardCounts() {
+        const collections = {
+          blogs: "blogs",
+          employees: "job-seekers",
+          jobs: "job-vacancies",
+          testimonials: "testimonials",
+          trainees: "trainees",
+          advertisements: "advertisements",
+        };
+
+        for (const key in collections) {
+          try {
+            const coll = collection(db, collections[key]);
+            const snapshot = await getCountFromServer(coll);
+            const element = document.getElementById(
+              `${key.replace(/s$/, "")}-count`
+            );
+            if (element) {
+              element.innerText = snapshot.data().count;
+            }
+          } catch (e) {
+            console.error(`Could not count ${key}:`, e);
+          }
+        }
+
+        try {
+          const traineesCollection = collection(db, "trainees");
+          const ongoingQuery = query(
+            traineesCollection,
+            where("status", "==", "ongoing")
+          );
+          const finishedQuery = query(
+            traineesCollection,
+            where("status", "==", "finished")
+          );
+
+          const ongoingSnapshot = await getCountFromServer(ongoingQuery);
+          const finishedSnapshot = await getCountFromServer(finishedQuery);
+
+          const ongoingCountEl = document.getElementById(
+            "ongoing-trainee-count"
+          );
+          const finishedCountEl = document.getElementById(
+            "finished-trainee-count"
+          );
+
+          if (ongoingCountEl)
+            ongoingCountEl.innerText = ongoingSnapshot.data().count;
+          if (finishedCountEl)
+            finishedCountEl.innerText = finishedSnapshot.data().count;
+        } catch (e) {
+          console.error("Could not count trainee statuses:", e);
+        }
+      }
+
+      // --- Firestore Logic ---
+      async function addData(collectionName, data, formElement) {
+        try {
+          await addDoc(collection(db, collectionName), data);
+          showMessageBox("Data added successfully!");
+          if (formElement) formElement.reset();
+          updateDashboardCounts();
+        } catch (error) {
+          console.error("Error adding document: ", error);
+          showMessageBox(`Error: ${error.message}`, true);
+        }
+      }
+
+      async function updateData(collectionName, docId, data, listPage) {
+        try {
+          const docRef = doc(db, collectionName, docId);
+          await updateDoc(docRef, data);
+          showMessageBox("Data updated successfully!");
+          updateDashboardCounts();
+          navigateTo(listPage);
+        } catch (error) {
+          console.error("Error updating document: ", error);
+          showMessageBox(`Error: ${error.message}`, true);
+        }
+      }
+
+      async function deleteData(collectionName, id) {
+        showConfirmationModal(
+          "Are you sure you want to delete this item?",
+          async () => {
+            try {
+              await deleteDoc(doc(db, collectionName, id));
+              showMessageBox("Item deleted successfully!");
+              updateDashboardCounts();
+            } catch (error) {
+              console.error("Error deleting document: ", error);
+              showMessageBox(`Error: ${error.message}`, true);
+            }
+          }
+        );
+      }
+
+      function createList(key, collectionName, renderRowFn, searchFields) {
+        const tableBody = document.getElementById(`${key}-list`);
+        const searchInput = document.getElementById(`${key}-search`);
+        const paginationControls = document.getElementById(`${key}-pagination`);
+
+        if (!tableBody) return;
+
+        // Show loading indicator
+        tableBody.innerHTML = `<tr class="loading-indicator"><td colspan="100%">Loading...</td></tr>`;
+
+        onSnapshot(
+          collection(db, collectionName),
+          (snapshot) => {
+            appData[key] = snapshot.docs.map((doc) => ({
+              id: doc.id,
+              ...doc.data(),
+            }));
+            paginationState[key].currentPage = 1;
+            renderPaginatedTable(key, renderRowFn, searchFields);
+          },
+          (error) => {
+            console.error(`Error fetching ${collectionName}:`, error);
+            showMessageBox(`Could not load ${key}. Please refresh.`, true);
+            tableBody.innerHTML = `<tr class="loading-indicator"><td colspan="100%">Error loading data.</td></tr>`;
+          }
+        );
+
+        if (searchInput) {
+          searchInput.addEventListener("keyup", (e) => {
+            paginationState[key].searchTerm = e.target.value.toLowerCase();
+            paginationState[key].currentPage = 1;
+            renderPaginatedTable(key, renderRowFn, searchFields);
+          });
+        }
+      }
+
+      function renderPaginatedTable(key, renderRowFn, searchFields) {
+        const tableBody = document.getElementById(`${key}-list`);
+        const paginationControls = document.getElementById(`${key}-pagination`);
+        const state = paginationState[key];
+
+        let filteredData = appData[key];
+
+        if (state.searchTerm) {
+          filteredData = appData[key].filter((item) =>
+            searchFields.some(
+              (field) =>
+                item[field] &&
+                item[field].toString().toLowerCase().includes(state.searchTerm)
+            )
+          );
+        }
+
+        const totalItems = filteredData.length;
+        const totalPages = Math.ceil(totalItems / state.itemsPerPage);
+        const startIndex = (state.currentPage - 1) * state.itemsPerPage;
+        const endIndex = startIndex + state.itemsPerPage;
+        const pageData = filteredData.slice(startIndex, endIndex);
+
+        tableBody.innerHTML = "";
+        if (pageData.length === 0) {
+          tableBody.innerHTML = `<tr><td colspan="100%" style="text-align:center;">No items found.</td></tr>`;
+        } else {
+          pageData.forEach((item) => {
+            tableBody.innerHTML += renderRowFn(item, item.id);
+          });
+        }
+
+        // Render pagination controls
+        paginationControls.innerHTML = `
+            <span>Page ${state.currentPage} of ${totalPages || 1}</span>
+            <button class="btn" id="${key}-prev-btn" ${
+          state.currentPage === 1 ? "disabled" : ""
+        }>Previous</button>
+            <button class="btn" id="${key}-next-btn" ${
+          state.currentPage >= totalPages ? "disabled" : ""
+        }>Next</button>
+        `;
+
+        document
+          .getElementById(`${key}-prev-btn`)
+          .addEventListener("click", () => {
+            if (state.currentPage > 1) {
+              state.currentPage--;
+              renderPaginatedTable(key, renderRowFn, searchFields);
+            }
+          });
+
+        document
+          .getElementById(`${key}-next-btn`)
+          .addEventListener("click", () => {
+            if (state.currentPage < totalPages) {
+              state.currentPage++;
+              renderPaginatedTable(key, renderRowFn, searchFields);
+            }
+          });
+      }
+
+      // --- Helper to get collection name from table ID ---
+      function getCollectionFromTable(element) {
+        const tableId = element.closest("table").querySelector("tbody").id;
+        const baseName = tableId.split("-")[0];
+
+        const map = {
+          seekers: "job-seekers",
+          jobs: "job-vacancies",
+          testimonials: "testimonials",
+          blogs: "blogs",
+          trainees: "trainees",
+          advertisements: "advertisements",
+        };
+        return map[baseName];
+      }
+
+      function setupImagePreview(inputId, previewId) {
+        const input = document.getElementById(inputId);
+        const preview = document.getElementById(previewId);
+        if (!input || !preview) return;
+
+        input.addEventListener("change", (event) => {
+          const file = event.target.files[0];
+          if (file) {
+            const reader = new FileReader();
+            reader.onload = (e) => {
+              preview.src = e.target.result;
+              preview.style.display = "block";
+            };
+            reader.readAsDataURL(file);
+          }
+        });
+      }
+
+      // --- Job Seekers (Employees) ---
+      let seekerImageBase64 = "";
+      const otherLanguageInput = document.getElementById(
+        "other-language-input"
+      );
+      const seekerLanguageSelect = document.getElementById("seeker-language");
+      const seekerFormTitle = document.getElementById("seeker-form-title");
+      const seekerSubmitBtn = document.getElementById("seeker-submit-btn");
+      const seekerForm = document.getElementById("seeker-form");
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+      // Toggle "Other Language" input field
+      seekerLanguageSelect.addEventListener("change", (e) => {
+        if (e.target.value === "Other") {
+          otherLanguageInput.classList.remove("hidden");
+          otherLanguageInput.required = true;
+        } else {
+          otherLanguageInput.classList.add("hidden");
+          otherLanguageInput.required = false;
+        }
+      });
+
+      document
+        .getElementById("seeker-image")
+        .addEventListener("change", (event) => {
+          const file = event.target.files[0];
+          if (file) {
+            const reader = new FileReader();
+            reader.onload = (e) => {
+              seekerImageBase64 = e.target.result;
+            };
+            reader.readAsDataURL(file);
+          } else {
+            seekerImageBase64 = "";
+          }
+        });
+
+      setupImagePreview("seeker-image", "seeker-image-preview");
+
+      function resetSeekerForm() {
+        seekerForm.reset();
+        seekerFormTitle.textContent = "Add New Employee";
+        seekerSubmitBtn.textContent = "Add Employee";
+        document.getElementById("experience-container").innerHTML = "";
+        document.getElementById("education-container").innerHTML = "";
+        document.getElementById("skills-container").innerHTML = "";
+        document.getElementById("seeker-image-preview").style.display = "none";
+        populateYearDropdowns();
+        seekerImageBase64 = "";
+        currentEdit.collection = null;
+        currentEdit.docId = null;
+      }
+
+      if (seekerForm) {
+        seekerForm.addEventListener("submit", (e) => {
+          e.preventDefault();
+
+          const email = document.getElementById("seeker-email").value;
+          if (!emailRegex.test(email)) {
+            showMessageBox("Please enter a valid email address.", true);
+            return;
+          }
+
+          const workHistory = Array.from(
+            document.querySelectorAll("#experience-container .dynamic-item")
+          )
+            .map((item) => ({
+              organization: item.querySelector('[name="exp-organization"]')
+                ?.value,
+              jobTitle: item.querySelector('[name="exp-job-title"]')?.value,
+              startDate: item.querySelector('[name="exp-start-date"]')?.value,
+              endDate: item.querySelector('[name="exp-end-date"]')?.value,
+              responsibilities: item.querySelector(
+                '[name="exp-responsibilities"]'
+              )?.value,
+            }))
+            .filter(
+              (exp) => exp.organization && exp.organization.trim() !== ""
+            );
+
+          const educationHistory = Array.from(
+            document.querySelectorAll("#education-container .dynamic-item")
+          )
+            .map((item) => ({
+              institution: item.querySelector('[name="edu-institution"]')
+                ?.value,
+              year: parseInt(item.querySelector('[name="edu-year"]')?.value),
+              qualification: item.querySelector('[name="edu-qualification"]')
+                ?.value,
+            }))
+            .filter((edu) => edu.institution && edu.institution.trim() !== "");
+
+          const skills = Array.from(
+            document.querySelectorAll("#skills-container .dynamic-item")
+          )
+            .map((item) => item.querySelector('[name="skill-entry"]')?.value)
+            .filter(Boolean);
+
+          const language =
+            seekerLanguageSelect.value === "Other"
+              ? otherLanguageInput.value
+              : seekerLanguageSelect.value;
+          const languagesAndLocation = {
+            language,
+            proficiency: document.getElementById("seeker-proficiency").value,
+            city: document.getElementById("seeker-city").value,
+            region: document.getElementById("seeker-region").value,
+            country: document.getElementById("seeker-country").value,
+          };
+
+          const name = document.getElementById("seeker-name").value;
+          const seekerData = {
+            employeeId: document.getElementById("seeker-id").value,
+            name,
+            email,
+            phone: document.getElementById("seeker-phone").value,
+            education: document.getElementById("seeker-education").value,
+            experience: parseInt(
+              document.getElementById("seeker-experience").value
+            ),
+            workHistory,
+            educationHistory,
+            skills,
+            languagesAndLocation,
+          };
+
+          if (seekerImageBase64) {
+            seekerData.imageUrl = seekerImageBase64;
+          }
+
+          if (currentEdit.docId && currentEdit.collection === "job-seekers") {
+            updateData(
+              "job-seekers",
+              currentEdit.docId,
+              seekerData,
+              "list-employee"
+            );
+          } else {
+            if (!seekerData.imageUrl) {
+              seekerData.imageUrl = `https://placehold.co/60x60/8D6E63/FFFFFF?text=${
+                name.split(" ")[0]
+              }`;
+            }
+            addData("job-seekers", seekerData, seekerForm);
+          }
+        });
+      }
+
+      function populateYearDropdowns() {
+        const yearSelects = document.querySelectorAll(".year-select");
+        yearSelects.forEach((select) => {
+          populateSingleYearDropdown(select);
+        });
+      }
+
+      function populateSingleYearDropdown(select) {
+        if (!select || select.options.length > 1) return;
+
+        const currentYear = new Date().getFullYear();
+        const startYear = 1950;
+
+        select.innerHTML = "";
+        const defaultOption = document.createElement("option");
+        defaultOption.textContent = "Select Year";
+        defaultOption.value = "";
+        select.appendChild(defaultOption);
+
+        for (let year = currentYear; year >= startYear; year--) {
+          const option = document.createElement("option");
+          option.value = year;
+          option.textContent = year;
+          select.appendChild(option);
+        }
+      }
+
+      const experienceContainer = document.getElementById(
+        "experience-container"
+      );
+      const educationContainer = document.getElementById("education-container");
+      const skillsContainer = document.getElementById("skills-container");
+
+      const experienceTemplate = `<div class="dynamic-item"><button type="button" class="btn btn-delete-item">Remove</button><div class="form-grid"><div class="form-group"><label>Organization Name</label><input type="text" name="exp-organization" required /></div><div class="form-group"><label>Job Title</label><input type="text" name="exp-job-title" required /></div><div class="form-group"><label>Start Date</label><input type="date" name="exp-start-date" required /></div><div class="form-group"><label>End Date</label><input type="date" name="exp-end-date" required /></div><div class="form-group full-width"><label>Responsibilities</label><textarea name="exp-responsibilities" required></textarea></div></div></div>`;
+      const educationTemplate = `<div class="dynamic-item"><button type="button" class="btn btn-delete-item">Remove</button><div class="form-grid"><div class="form-group"><label>Institution Name</label><input type="text" name="edu-institution" required /></div><div class="form-group"><label>Year of Graduation</label><select name="edu-year" class="year-select" required></select></div><div class="form-group"><label>Qualification</label><input type="text" name="edu-qualification" required /></div></div></div>`;
+      const skillsTemplate = `<div class="dynamic-item"><button type="button" class="btn btn-delete-item">Remove</button><div class="form-grid"><div class="form-group full-width"><label>Skill</label><input type="text" name="skill-entry" required /></div></div></div>`;
+
+      document
+        .getElementById("add-experience-btn")
+        .addEventListener("click", () => {
+          experienceContainer.insertAdjacentHTML(
+            "beforeend",
+            experienceTemplate
+          );
+        });
+      document
+        .getElementById("add-education-btn")
+        .addEventListener("click", () => {
+          educationContainer.insertAdjacentHTML("beforeend", educationTemplate);
+          populateYearDropdowns();
+        });
+      document.getElementById("add-skill-btn").addEventListener("click", () => {
+        skillsContainer.insertAdjacentHTML("beforeend", skillsTemplate);
+      });
+
+      window.addEventListener("load", populateYearDropdowns);
+
+      async function populateSeekerEditForm(docId) {
+        try {
+          const docRef = doc(db, "job-seekers", docId);
+          const docSnap = await getDoc(docRef);
+
+          if (docSnap.exists()) {
+            const data = docSnap.data();
+            resetSeekerForm();
+            currentEdit.collection = "job-seekers";
+            currentEdit.docId = docId;
+            seekerFormTitle.textContent = "Edit Employee";
+            seekerSubmitBtn.textContent = "Update Employee";
+
+            document.getElementById("seeker-id").value = data.employeeId || "";
+            document.getElementById("seeker-name").value = data.name;
+            document.getElementById("seeker-email").value = data.email;
+            document.getElementById("seeker-phone").value = data.phone;
+            document.getElementById("seeker-experience").value =
+              data.experience;
+            document.getElementById("seeker-education").value = data.education;
+
+            if (data.imageUrl) {
+              const preview = document.getElementById("seeker-image-preview");
+              preview.src = data.imageUrl;
+              preview.style.display = "block";
+              seekerImageBase64 = data.imageUrl;
+            }
+
+            experienceContainer.innerHTML = "";
+            (data.workHistory || []).forEach((exp) => {
+              const wrapper = document.createElement("div");
+              wrapper.innerHTML = experienceTemplate;
+              const item = wrapper.firstElementChild;
+              item.querySelector('[name="exp-organization"]').value =
+                exp.organization;
+              item.querySelector('[name="exp-job-title"]').value = exp.jobTitle;
+              item.querySelector('[name="exp-start-date"]').value =
+                exp.startDate;
+              item.querySelector('[name="exp-end-date"]').value = exp.endDate;
+              item.querySelector('[name="exp-responsibilities"]').value =
+                exp.responsibilities;
+              experienceContainer.appendChild(item);
+            });
+
+            educationContainer.innerHTML = "";
+            (data.educationHistory || []).forEach((edu) => {
+              const wrapper = document.createElement("div");
+              wrapper.innerHTML = educationTemplate;
+              const item = wrapper.firstElementChild;
+              item.querySelector('[name="edu-institution"]').value =
+                edu.institution;
+              const yearSelect = item.querySelector('[name="edu-year"]');
+              populateSingleYearDropdown(yearSelect);
+              yearSelect.value = edu.year;
+              item.querySelector('[name="edu-qualification"]').value =
+                edu.qualification;
+              educationContainer.appendChild(item);
+            });
+
+            skillsContainer.innerHTML = "";
+            (data.skills || []).forEach((skill) => {
+              const wrapper = document.createElement("div");
+              wrapper.innerHTML = skillsTemplate;
+              const item = wrapper.firstElementChild;
+              item.querySelector('[name="skill-entry"]').value = skill;
+              skillsContainer.appendChild(item);
+            });
+
+            if (data.languagesAndLocation) {
+              seekerLanguageSelect.value = data.languagesAndLocation.language;
+              if (data.languagesAndLocation.language === "Other") {
+                otherLanguageInput.classList.remove("hidden");
+                otherLanguageInput.value = data.languagesAndLocation.language;
+              } else {
+                otherLanguageInput.classList.add("hidden");
+              }
+              document.getElementById("seeker-proficiency").value =
+                data.languagesAndLocation.proficiency;
+              document.getElementById("seeker-city").value =
+                data.languagesAndLocation.city;
+              document.getElementById("seeker-region").value =
+                data.languagesAndLocation.region;
+              document.getElementById("seeker-country").value =
+                data.languagesAndLocation.country;
+            }
+            navigateTo("add-employee", false);
+          } else {
+            showMessageBox("Employee not found for editing.", true);
+          }
+        } catch (error) {
+          showMessageBox("Error fetching employee data.", true);
+          console.error(error);
+        }
+      }
+
+      createList(
+        "seekers",
+        "job-seekers",
+        (data, id) => `<tr>
+            <td><img src="${data.imageUrl}" alt="${
+          data.name
+        }" class="table-image"></td>
+            <td>${data.employeeId || "N/A"}</td>
+            <td>${data.name}</td>
+            <td>${data.education}</td>
+            <td>${data.experience} years</td>
+            <td>
+                <button class="btn btn-view" data-type="employee" data-id="${id}">View</button>
+                <button class="btn btn-edit" data-id="${id}">Edit</button>
+                <button class="btn btn-delete" data-id="${id}">Delete</button>
+            </td>
+          </tr>`,
+        ["name", "employeeId"]
+      );
+
+      // --- Trainees ---
+      const traineeForm = document.getElementById("trainee-form");
+      const traineeFormTitle = document.getElementById("trainee-form-title");
+      const traineeSubmitBtn = document.getElementById("trainee-submit-btn");
+      let traineeImageBase64 = "";
+
+      document
+        .getElementById("trainee-image")
+        .addEventListener("change", (event) => {
+          const file = event.target.files[0];
+          if (file) {
+            const reader = new FileReader();
+            reader.onload = (e) => {
+              traineeImageBase64 = e.target.result;
+            };
+            reader.readAsDataURL(file);
+          } else {
+            traineeImageBase64 = "";
+          }
+        });
+      setupImagePreview("trainee-image", "trainee-image-preview");
+
+      function resetTraineeForm() {
+        traineeForm.reset();
+        traineeFormTitle.textContent = "Add New Trainee";
+        traineeSubmitBtn.textContent = "Add Trainee";
+        traineeImageBase64 = "";
+        document.getElementById("trainee-image-preview").style.display = "none";
+        currentEdit.collection = null;
+        currentEdit.docId = null;
+      }
+
+      if (traineeForm) {
+        traineeForm.addEventListener("submit", (e) => {
+          e.preventDefault();
+          const email = document.getElementById("trainee-email").value;
+          if (!emailRegex.test(email)) {
+            showMessageBox("Please enter a valid email address.", true);
+            return;
+          }
+
+          const name = document.getElementById("trainee-name").value;
+          const traineeData = {
+            name: name,
+            email,
+            phone: document.getElementById("trainee-phone").value,
+            program: document.getElementById("trainee-program").value,
+            startDate: document.getElementById("trainee-start-date").value,
+          };
+
+          if (traineeImageBase64) traineeData.imageUrl = traineeImageBase64;
+
+          if (currentEdit.docId && currentEdit.collection === "trainees") {
+            updateData(
+              "trainees",
+              currentEdit.docId,
+              traineeData,
+              "list-trainee"
+            );
+          } else {
+            traineeData.status = "ongoing";
+            if (!traineeData.imageUrl)
+              traineeData.imageUrl = `https://placehold.co/60x60/673AB7/FFFFFF?text=${
+                name.split(" ")[0]
+              }`;
+            addData("trainees", traineeData, traineeForm);
+          }
+        });
+      }
+
+      async function populateTraineeEditForm(docId) {
+        const docRef = doc(db, "trainees", docId);
+        const docSnap = await getDoc(docRef);
+        if (docSnap.exists()) {
+          const data = docSnap.data();
+          resetTraineeForm();
+          currentEdit.collection = "trainees";
+          currentEdit.docId = docId;
+
+          traineeFormTitle.textContent = "Edit Trainee";
+          traineeSubmitBtn.textContent = "Update Trainee";
+
+          document.getElementById("trainee-name").value = data.name;
+          document.getElementById("trainee-email").value = data.email;
+          document.getElementById("trainee-phone").value = data.phone;
+          document.getElementById("trainee-program").value = data.program;
+          document.getElementById("trainee-start-date").value = data.startDate;
+
+          if (data.imageUrl) {
+            const preview = document.getElementById("trainee-image-preview");
+            preview.src = data.imageUrl;
+            preview.style.display = "block";
+            traineeImageBase64 = data.imageUrl;
+          }
+
+          navigateTo("add-trainee", false);
+        } else {
+          showMessageBox("Trainee not found for editing.", true);
+        }
+      }
+
+      createList(
+        "trainees",
+        "trainees",
+        (data, id) => {
+          const statusClass =
+            data.status === "ongoing" ? "status-ongoing" : "status-finished";
+          let actionButtons = `<button class="btn btn-view" data-type="trainee" data-id="${id}">View</button><button class="btn btn-edit" data-id="${id}">Edit</button><button class="btn btn-delete" data-id="${id}">Delete</button>`;
+          if (data.status === "ongoing") {
+            actionButtons += `<button class="btn btn-complete" data-id="${id}">Mark as Finished</button>`;
+          } else {
+            actionButtons += `<button class="btn btn-view btn-set-ongoing" data-id="${id}">Set to Ongoing</button>`;
+          }
+          return `<tr>
+                  <td><img src="${data.imageUrl}" alt="${data.name}" class="table-image"></td>
+                  <td>${data.name}</td>
+                  <td>${data.program}</td>
+                  <td>${data.startDate}</td>
+                  <td><span class="${statusClass}">${data.status}</span></td>
+                  <td>${actionButtons}</td>
+                </tr>`;
+        },
+        ["name", "program"]
+      );
+
+      // --- Jobs ---
+      const jobForm = document.getElementById("job-form");
+      const jobFormTitle = document.getElementById("job-form-title");
+      const jobSubmitBtn = document.getElementById("job-submit-btn");
+
+      function resetJobForm() {
+        jobForm.reset();
+        jobFormTitle.textContent = "Add New Job Vacancy";
+        jobSubmitBtn.textContent = "Add Job Vacancy";
+        currentEdit.collection = null;
+        currentEdit.docId = null;
+      }
+      if (jobForm) {
+        jobForm.addEventListener("submit", (e) => {
+          e.preventDefault();
+          const email = document.getElementById("job-email").value;
+          if (!emailRegex.test(email)) {
+            showMessageBox("Please enter a valid contact email address.", true);
+            return;
+          }
+
+          const jobData = {
+            organization: document.getElementById("job-organization").value,
+            organizationType:
+              document.getElementById("organization-type").value,
+            titles: document
+              .getElementById("job-title")
+              .value.split(",")
+              .map((t) => t.trim()),
+            jobType: document.getElementById("job-type").value,
+            description: document.getElementById("job-description").value,
+            education: document.getElementById("job-education").value,
+            experience: parseInt(
+              document.getElementById("job-experience").value
+            ),
+            skills: document
+              .getElementById("job-skills")
+              .value.split(",")
+              .map((s) => s.trim()),
+            locations: document
+              .getElementById("job-location")
+              .value.split(",")
+              .map((l) => l.trim()),
+            deadline: document.getElementById("job-deadline").value,
+            contactEmail: email,
+            phone: document.getElementById("job-phone").value,
+          };
+
+          if (currentEdit.docId && currentEdit.collection === "job-vacancies") {
+            updateData("job-vacancies", currentEdit.docId, jobData, "list-job");
+          } else {
+            addData("job-vacancies", jobData, jobForm);
+          }
+        });
+      }
+
+      async function populateJobEditForm(docId) {
+        const docRef = doc(db, "job-vacancies", docId);
+        const docSnap = await getDoc(docRef);
+
+        if (docSnap.exists()) {
+          const data = docSnap.data();
+          resetJobForm();
+          currentEdit.collection = "job-vacancies";
+          currentEdit.docId = docId;
+
+          jobFormTitle.textContent = "Edit Job Vacancy";
+          jobSubmitBtn.textContent = "Update Job Vacancy";
+
+          document.getElementById("job-organization").value =
+            data.organization || "";
+          document.getElementById("organization-type").value =
+            data.organizationType || "";
+          document.getElementById("job-title").value = (data.titles || []).join(
+            ", "
+          );
+          document.getElementById("job-type").value = data.jobType || "";
+          document.getElementById("job-description").value =
+            data.description || "";
+          document.getElementById("job-education").value = data.education || "";
+          document.getElementById("job-experience").value =
+            data.experience || "";
+          document.getElementById("job-skills").value = (
+            data.skills || []
+          ).join(", ");
+          document.getElementById("job-location").value = (
+            data.locations || []
+          ).join(", ");
+          document.getElementById("job-deadline").value = data.deadline || "";
+          document.getElementById("job-email").value = data.contactEmail || "";
+          document.getElementById("job-phone").value = data.phone || "";
+
+          navigateTo("add-job", false);
+        } else {
+          showMessageBox("Job vacancy not found for editing.", true);
+        }
+      }
+
+      createList(
+        "jobs",
+        "job-vacancies",
+        (data, id) => {
+          const titles = (data.titles || []).join(", ");
+          const deadline = data.deadline || "N/A";
+
+          return `<tr>
+            <td>${data.organization || ""}</td>
+            <td>${data.organizationType || ""}</td>
+            <td>${titles}</td>
+            <td>${data.jobType || ""}</td>
+            <td>${deadline}</td>
+            <td>
+              <button class="btn btn-view" data-type="job" data-id="${id}">View</button>
+              <button class="btn btn-edit" data-id="${id}">Edit</button>
+              <button class="btn btn-delete" data-id="${id}">Delete</button>
+            </td>
+          </tr>`;
+        },
+        ["titles", "organization"]
+      );
+
+      // --- Testimonials ---
+      const testimonialForm = document.getElementById("testimonial-form");
+      const testimonialFormTitle = document.getElementById(
+        "testimonial-form-title"
+      );
+      const testimonialSubmitBtn = document.getElementById(
+        "testimonial-submit-btn"
+      );
+
+      function resetTestimonialForm() {
+        testimonialForm.reset();
+        testimonialFormTitle.textContent = "Add New Testimonial";
+        testimonialSubmitBtn.textContent = "Add Testimonial";
+        currentEdit.collection = null;
+        currentEdit.docId = null;
+      }
+
+      if (testimonialForm) {
+        testimonialForm.addEventListener("submit", (e) => {
+          e.preventDefault();
+          const testimonialData = {
+            name: document.getElementById("testimonial-name").value,
+            title: document.getElementById("testimonial-title").value,
+            quote: document.getElementById("testimonial-quote").value,
+          };
+          if (currentEdit.docId && currentEdit.collection === "testimonials") {
+            updateData(
+              "testimonials",
+              currentEdit.docId,
+              testimonialData,
+              "list-testimonial"
+            );
+          } else {
+            addData("testimonials", testimonialData, testimonialForm);
+          }
+        });
+      }
+
+      async function populateTestimonialEditForm(docId) {
+        const docRef = doc(db, "testimonials", docId);
+        const docSnap = await getDoc(docRef);
+        if (docSnap.exists()) {
+          const data = docSnap.data();
+          resetTestimonialForm();
+          currentEdit.collection = "testimonials";
+          currentEdit.docId = docId;
+
+          testimonialFormTitle.textContent = "Edit Testimonial";
+          testimonialSubmitBtn.textContent = "Update Testimonial";
+
+          document.getElementById("testimonial-name").value = data.name;
+          document.getElementById("testimonial-title").value = data.title;
+          document.getElementById("testimonial-quote").value = data.quote;
+
+          navigateTo("add-testimonial", false);
+        } else {
+          showMessageBox("Testimonial not found for editing.", true);
+        }
+      }
+
+      createList(
+        "testimonials",
+        "testimonials",
+        (data, id) =>
+          `<tr><td>${data.name}</td><td>${
+            data.title
+          }</td><td>${data.quote.substring(
+            0,
+            50
+          )}...</td><td><button class="btn btn-view" data-type="testimonial" data-id="${id}">View</button><button class="btn btn-edit" data-id="${id}">Edit</button><button class="btn btn-delete" data-id="${id}">Delete</button></td></tr>`,
+        ["name"]
+      );
+
+      // --- Blogs ---
+      let blogImageBase64 = "";
+      const blogForm = document.getElementById("blog-form");
+      const blogFormTitle = document.getElementById("blog-form-title");
+      const blogSubmitBtn = document.getElementById("blog-submit-btn");
+
+      document
+        .getElementById("blog-image")
+        .addEventListener("change", (event) => {
+          const file = event.target.files[0];
+          if (file) {
+            const reader = new FileReader();
+            reader.onload = (e) => {
+              blogImageBase64 = e.target.result;
+            };
+            reader.readAsDataURL(file);
+          }
+        });
+      setupImagePreview("blog-image", "blog-image-preview");
+
+      function resetBlogForm() {
+        blogForm.reset();
+        blogFormTitle.textContent = "Add New Blog Post";
+        blogSubmitBtn.textContent = "Add Blog Post";
+        blogImageBase64 = "";
+        document.getElementById("blog-image-preview").style.display = "none";
+        currentEdit.collection = null;
+        currentEdit.docId = null;
+      }
+
+      if (blogForm) {
+        blogForm.addEventListener("submit", (e) => {
+          e.preventDefault();
+          const blogData = {
+            title: document.getElementById("blog-title").value,
+            date: document.getElementById("blog-date").value,
+            content: document.getElementById("blog-content").value,
+            imageUrl: blogImageBase64 || "https://placehold.co/600x400",
+          };
+
+          if (currentEdit.docId && currentEdit.collection === "blogs") {
+            updateData("blogs", currentEdit.docId, blogData, "list-blog");
+          } else {
+            addData("blogs", blogData, blogForm);
+          }
+
+          blogImageBase64 = "";
+        });
+      }
+
+      async function populateBlogEditForm(docId) {
+        const docRef = doc(db, "blogs", docId);
+        const docSnap = await getDoc(docRef);
+        if (docSnap.exists()) {
+          const data = docSnap.data();
+          resetBlogForm();
+          currentEdit.collection = "blogs";
+          currentEdit.docId = docId;
+
+          blogFormTitle.textContent = "Edit Blog Post";
+          blogSubmitBtn.textContent = "Update Blog Post";
+
+          document.getElementById("blog-title").value = data.title;
+          document.getElementById("blog-date").value = data.date;
+          document.getElementById("blog-content").value = data.content;
+          blogImageBase64 = data.imageUrl || "";
+          if (data.imageUrl) {
+            const preview = document.getElementById("blog-image-preview");
+            preview.src = data.imageUrl;
+            preview.style.display = "block";
+          }
+
+          navigateTo("add-blog", false);
+        } else {
+          showMessageBox("Blog post not found for editing.", true);
+        }
+      }
+
+      createList(
+        "blogs",
+        "blogs",
+        (data, id) =>
+          `<tr>
+     <td><img src="${data.imageUrl}" alt="${data.title}" class="table-image"></td>
+     <td>${data.title}</td>
+     <td>${data.date}</td>
+     <td>
+       <button class="btn btn-view" data-type="blog" data-id="${id}">View</button>
+       <button class="btn btn-edit" data-id="${id}">Edit</button>
+       <button class="btn btn-delete" data-id="${id}">Delete</button>
+     </td>
+   </tr>`,
+        ["title"]
+      );
+
+      // --- Advertisements ---
+      let advertImageBase64 = "";
+      const advertForm = document.getElementById("advertisement-form");
+      const advertSubmitBtn = document.getElementById("advert-submit-btn");
+
+      document
+        .getElementById("advert-image")
+        .addEventListener("change", (event) => {
+          const file = event.target.files[0];
+          if (file) {
+            const reader = new FileReader();
+            reader.onload = (e) => {
+              advertImageBase64 = e.target.result;
+            };
+            reader.readAsDataURL(file);
+          } else {
+            advertImageBase64 = "";
+          }
+        });
+
+      setupImagePreview("advert-image", "advert-image-preview");
+
+      function resetAdvertForm() {
+        advertForm.reset();
+        advertSubmitBtn.textContent = "Add Advertisement";
+        advertImageBase64 = "";
+        document.getElementById("advert-image-preview").style.display = "none";
+        currentEdit.collection = null;
+        currentEdit.docId = null;
+      }
+
+      async function populateAdvertisementEditForm(docId) {
+        const docRef = doc(db, "advertisements", docId);
+        const docSnap = await getDoc(docRef);
+        if (docSnap.exists()) {
+          const data = docSnap.data();
+          resetAdvertForm();
+          currentEdit.collection = "advertisements";
+          currentEdit.docId = docId;
+
+          document.getElementById("advert-title").value = data.title;
+          document.getElementById("advert-content").value = data.content;
+          advertImageBase64 = data.imageUrl || "";
+          if (data.imageUrl) {
+            const preview = document.getElementById("advert-image-preview");
+            preview.src = data.imageUrl;
+            preview.style.display = "block";
+          }
+          advertSubmitBtn.textContent = "Update Advertisement";
+
+          navigateTo("add-advertisement", false);
+        } else {
+          showMessageBox("Advertisement not found for editing.", true);
+        }
+      }
+
+      if (advertForm) {
+        advertForm.addEventListener("submit", async (e) => {
+          e.preventDefault();
+          const advertData = {
+            title: document.getElementById("advert-title").value,
+            content: document.getElementById("advert-content").value,
+          };
+          if (advertImageBase64) advertData.imageUrl = advertImageBase64;
+
+          if (
+            currentEdit.docId &&
+            currentEdit.collection === "advertisements"
+          ) {
+            updateData(
+              "advertisements",
+              currentEdit.docId,
+              advertData,
+              "list-advertisement"
+            );
+          } else {
+            if (!advertData.imageUrl)
+              advertData.imageUrl = "https://placehold.co/300x200";
+            addData("advertisements", advertData, advertForm);
+          }
+        });
+      }
+
+      createList(
+        "advertisements",
+        "advertisements",
+        (data, id) => `
+      <tr>
+        <td><img src="${data.imageUrl}" class="table-image" alt="${
+          data.title
+        }"></td>
+        <td>${data.title}</td>
+        <td>${data.content.substring(0, 50)}...</td>
+        <td>
+          <button class="btn btn-view" data-id="${id}" data-type="advertisement">View</button>
+          <button class="btn btn-edit" data-id="${id}">Edit</button>
+          <button class="btn btn-delete" data-id="${id}">Delete</button>
+        </td>
+      </tr>`,
+        ["title"]
+      );
+
+      // --- Global Event Delegation for Action Buttons ---
+      document.addEventListener("click", async (e) => {
+        if (e.target.classList.contains("btn-delete-item")) {
+          e.target.closest(".dynamic-item").remove();
+        }
+
+        const target = e.target;
+
+        if (target.classList.contains("btn-delete")) {
+          const docId = target.dataset.id;
+          const collection = getCollectionFromTable(target);
+          if (collection) deleteData(collection, docId);
+        }
+
+        if (target.classList.contains("btn-view")) {
+          const docId = target.dataset.id;
+          const type = target.dataset.type;
+          if (type === "employee") {
+            const docRef = doc(db, "job-seekers", docId);
+            const docSnap = await getDoc(docRef);
+            if (docSnap.exists()) {
+              const data = docSnap.data();
+              let detailsHtml = `<h3>${data.name}</h3>`;
+              detailsHtml += `<p><strong>Employee ID:</strong> ${data.employeeId}</p>`;
+              detailsHtml += `<h4>Personal Information</h4><p><strong>Email:</strong> ${data.email}</p><p><strong>Phone:</strong> ${data.phone}</p><p><strong>Education:</strong> ${data.education}</p><p><strong>Experience:</strong> ${data.experience} years</p>`;
+              if (data.languagesAndLocation) {
+                detailsHtml += `<h4>Languages & Location</h4><p><strong>Language:</strong> ${data.languagesAndLocation.language}</p><p><strong>Proficiency:</strong> ${data.languagesAndLocation.proficiency}</p><p><strong>City:</strong> ${data.languagesAndLocation.city}</p><p><strong>Region:</strong> ${data.languagesAndLocation.region}</p><p><strong>Country:</strong> ${data.languagesAndLocation.country}</p>`;
+              }
+              if (data.workHistory?.length > 0) {
+                detailsHtml += `<h4>Work Experience</h4><ul>${data.workHistory
+                  .map(
+                    (exp) =>
+                      `<li><strong>${exp.jobTitle}</strong> at ${exp.organization} (${exp.startDate} - ${exp.endDate})<p><em>Responsibilities:</em> ${exp.responsibilities}</p></li>`
+                  )
+                  .join("")}</ul>`;
+              }
+              if (data.educationHistory?.length > 0) {
+                detailsHtml += `<h4>Education</h4><ul>${data.educationHistory
+                  .map(
+                    (edu) =>
+                      `<li><strong>${edu.qualification}</strong> from ${edu.institution} (${edu.year})</li>`
+                  )
+                  .join("")}</ul>`;
+              }
+              if (data.skills?.length > 0) {
+                detailsHtml += `<h4>Skills</h4><div class="skills-list">${data.skills
+                  .map((skill) => `<span class="skill-tag">${skill}</span>`)
+                  .join("")}</div>`;
+              }
+              showDetailsModal("details-modal", detailsHtml);
+            }
+          } else if (type === "trainee") {
+            const docRef = doc(db, "trainees", docId);
+            const docSnap = await getDoc(docRef);
+            if (docSnap.exists()) {
+              const data = docSnap.data();
+              let detailsHtml = `<h3>${data.name}</h3>`;
+              detailsHtml += `<p><strong>Email:</strong> ${data.email}</p>`;
+              detailsHtml += `<p><strong>Phone:</strong> ${data.phone}</p>`;
+              detailsHtml += `<p><strong>Program:</strong> ${data.program}</p>`;
+              detailsHtml += `<p><strong>Start Date:</strong> ${data.startDate}</p>`;
+              detailsHtml += `<p><strong>Status:</strong> ${data.status}</p>`;
+              showDetailsModal("trainee-details-modal", detailsHtml);
+            }
+          } else if (type === "job") {
+            const docRef = doc(db, "job-vacancies", docId);
+            const docSnap = await getDoc(docRef);
+            if (docSnap.exists()) {
+              const data = docSnap.data();
+              let detailsHtml = `<h3>${(data.titles || []).join(", ")}</h3>`;
+              detailsHtml += `<p><strong>Organization:</strong> ${data.organization} (${data.organizationType})</p>`;
+              detailsHtml += `<p><strong>Location(s):</strong> ${(
+                data.locations || []
+              ).join(", ")}</p>`;
+              detailsHtml += `<p><strong>Job Type:</strong> ${data.jobType}</p>`;
+              detailsHtml += `<h4>Description</h4><p>${data.description.replace(
+                /\n/g,
+                "<br>"
+              )}</p>`;
+              detailsHtml += `<h4>Requirements</h4>`;
+              detailsHtml += `<p><strong>Education:</strong> ${data.education}</p>`;
+              detailsHtml += `<p><strong>Experience:</strong> ${data.experience} years</p>`;
+              detailsHtml += `<p><strong>Skills:</strong> ${(
+                data.skills || []
+              ).join(", ")}</p>`;
+              detailsHtml += `<h4>Contact</h4>`;
+              detailsHtml += `<p><strong>Apply before:</strong> ${data.deadline}</p>`;
+              detailsHtml += `<p><strong>Email:</strong> ${data.contactEmail}</p>`;
+              if (data.phone)
+                detailsHtml += `<p><strong>Phone:</strong> ${data.phone}</p>`;
+
+              showDetailsModal("details-modal", detailsHtml);
+            }
+          } else if (type === "testimonial") {
+            const docRef = doc(db, "testimonials", docId);
+            const docSnap = await getDoc(docRef);
+            if (docSnap.exists()) {
+              const data = docSnap.data();
+              let detailsHtml = `<h3>Testimonial by ${data.name}</h3>`;
+              detailsHtml += `<p><strong>Title:</strong> ${data.title}</p>`;
+              detailsHtml += `<h4>Quote</h4><p>"${data.quote}"</p>`;
+              showDetailsModal("details-modal", detailsHtml);
+            }
+          } else if (type === "blog") {
+            const docRef = doc(db, "blogs", docId);
+            const docSnap = await getDoc(docRef);
+            if (docSnap.exists()) {
+              const data = docSnap.data();
+              let detailsHtml = `<h3>${data.title}</h3>`;
+              detailsHtml += `<p><strong>Date:</strong> ${data.date}</p>`;
+              if (data.imageUrl) {
+                detailsHtml += `<img src="${data.imageUrl}" alt="${data.title}" style="max-width: 100%; border-radius: 8px; margin-top: 1rem;">`;
+              }
+              detailsHtml += `<h4 style="margin-top: 1rem;">Content</h4><p>${data.content.replace(
+                /\n/g,
+                "<br>"
+              )}</p>`;
+              showDetailsModal("details-modal", detailsHtml);
+            }
+          } else if (type === "advertisement") {
+            const docRef = doc(db, "advertisements", docId);
+            const docSnap = await getDoc(docRef);
+            if (docSnap.exists()) {
+              const data = docSnap.data();
+              let detailsHtml = `<h3>${data.title}</h3>`;
+              if (data.imageUrl) {
+                detailsHtml += `<img src="${data.imageUrl}" alt="${data.title}" style="max-width: 100%; border-radius: 8px; margin-top: 1rem;">`;
+              }
+              detailsHtml += `<h4 style="margin-top: 1rem;">Content</h4><p>${data.content.replace(
+                /\n/g,
+                "<br>"
+              )}</p>`;
+              showDetailsModal("details-modal", detailsHtml);
+            }
+          }
+        }
+
+        if (target.classList.contains("btn-edit")) {
+          const docId = target.dataset.id;
+          const collection = getCollectionFromTable(target);
+          if (collection === "job-seekers") await populateSeekerEditForm(docId);
+          if (collection === "trainees") await populateTraineeEditForm(docId);
+          if (collection === "job-vacancies") await populateJobEditForm(docId);
+          if (collection === "testimonials")
+            await populateTestimonialEditForm(docId);
+          if (collection === "blogs") await populateBlogEditForm(docId);
+          if (collection === "advertisements")
+            await populateAdvertisementEditForm(docId);
+        }
+
+        if (target.classList.contains("btn-complete")) {
+          const docId = target.dataset.id;
+          showConfirmationModal(
+            "Are you sure this trainee has finished?",
+            async () => {
+              try {
+                await updateDoc(doc(db, "trainees", docId), {
+                  status: "finished",
+                });
+                showMessageBox("Trainee status updated to Finished.");
+                updateDashboardCounts();
+              } catch (error) {
+                console.error("Error updating trainee status:", error);
+                showMessageBox("Error updating status.", true);
+              }
+            }
+          );
+        }
+
+        if (target.classList.contains("btn-set-ongoing")) {
+          const docId = target.dataset.id;
+          showConfirmationModal(
+            "Are you sure you want to set this trainee's status to ongoing?",
+            async () => {
+              try {
+                await updateDoc(doc(db, "trainees", docId), {
+                  status: "ongoing",
+                });
+                showMessageBox("Trainee status updated to Ongoing.");
+                updateDashboardCounts();
+              } catch (error) {
+                console.error("Error updating trainee status:", error);
+                showMessageBox("Error updating status.", true);
+              }
+            }
+          );
+        }
+      });
+    </script>
+  </body>
+</html>
